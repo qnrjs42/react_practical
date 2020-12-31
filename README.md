@@ -1,3 +1,48 @@
+## RactDOM.createPortal
+
+
+
+```html
+// public.index.html
+<div id="root"></div> // 기존 root
+<div id="something"></div> // 새로 추가한 something
+```
+
+
+
+```tsx
+// App.js
+
+<>
+	{ReactDOM.createPortal(
+    	<>
+        	<p>안녕하세요</p>
+        	<p>실전 리액트 프로그래밍</p>
+        </>,
+        docuement.getElementById('somthing'),
+    )}
+</>
+```
+
+
+
+
+
+
+
+---
+
+## key
+
+- 렌더링을 효율적으로 하기 위해 필요한 값
+- 이 값을 이용해 virtual dom에서 연산을 효율적으로 할 수 있음
+
+
+
+---
+
+
+
 ## 컴포넌트 상태 값
 
 - 특정 값이 바뀌지 않아도 렌더링이 되는 경우를 방지
@@ -6,6 +51,8 @@
 ```
 React.memo()
 ```
+
+
 
 <br/>
 
