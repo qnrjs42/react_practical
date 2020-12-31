@@ -1,3 +1,73 @@
+상태 값 변경 함수
+
+ex) setCount(count + 1);
+
+비동기이면서 batch(일괄) 처리하기 때문에
+
+```jsx
+const onClick = () => {
+	setCount(count + 1);
+	setCount(count + 1);
+}
+```
+
+리액트는 효율적으로 렌더링 하기 위해 위의 코드는 count가 1밖에 증가하지 않는다.
+
+만약 리액트가 상태 값 변경 함수를 동기 처리한다면 하나의 상태 값 변경 함수가 호출 될 때마다
+
+화면을 다시 그리기 때문에 성능 이슈가 생길 수 있음.
+
+```jsx
+const onClick = () => {
+	setCount(count => count + 1);
+	setCount(count => count + 1);
+}
+```
+
+만약 꼭 사용한다면 위와 같이 함수를 입력하면 된다.
+
+
+
+```jsx
+// 외부에서 이벤트 핸들러 등록해서 사용할 경우 batch 처리가 되지 않는다.
+useEffect(() => {
+	window.addEventListenr('click', onClick);
+    return () => window.removeEventListener('click', onClick);
+});
+console.log('render called');
+```
+
+
+
+```jsx
+
+const onClick = () => {
+	ReactDOM.unstable_batchedUpdates(() => {
+        setCount(count => count + 1);
+    	setCount(count => count + 1);
+    });
+}
+useEffect(() => {
+	window.addEventListenr('click', onClick);
+    return () => window.removeEventListener('click', onClick);
+});
+console.log('render called');
+```
+
+- 외부에서도 이벤트 핸들러를 batch 처리 하기 위해서 ReactDOM.unstable_batchedUpdates()을 사용한다.
+
+concurrent mode로 동작할 미래 리액트는 외부에서 관리되는 이벤트 처리 함수도 batch로 처리될 예정.
+
+---
+
+가상 돔: 렌더 단계
+
+실제 돔: 커밋 단계
+
+리액트는 렌더링할 때마다 가상 돔을 만들어 이전 가상 돔과 비교함.
+
+---
+
 컴포넌트가 추가 되는 현상: mount
 
 컴포넌트가 삭제 되는 현상: unmount
