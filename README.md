@@ -1,6 +1,10 @@
+컴포넌트가 추가 되는 현상: mount
+
+컴포넌트가 삭제 되는 현상: unmount
+
+---
+
 ## RactDOM.createPortal
-
-
 
 ```html
 // public.index.html
@@ -8,10 +12,9 @@
 <div id="something"></div> // 새로 추가한 something
 ```
 
-
-
-```tsx
+```jsx
 // App.js
+import ReactDOM from 'react-dom';
 
 <>
 	{ReactDOM.createPortal(
@@ -26,16 +29,68 @@
 
 
 
-
-
-
-
 ---
 
 ## key
 
 - 렌더링을 효율적으로 하기 위해 필요한 값
 - 이 값을 이용해 virtual dom에서 연산을 효율적으로 할 수 있음
+- key가 바뀌면 기존 돔 요소를 삭제했다가 다시 생성
+
+```jsx
+import { useEffect, useState } from "react";
+
+const App = () => {
+  const [seconds, setSeconds] = useState(0);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setSeconds(v => v+1);
+    }, 1000);
+  });
+
+  return (
+    <div key={seconds}>
+     <h1 style={{color: seconds %2 ? 'red' : 'blue'}}>안뇽하세요</h1> 
+     <h2>지금까지 {seconds}초가 지났습니다.</h2>
+    </div>
+      
+      
+      // key를 컴포넌트에 줄 경우 key 값이 변경되어 컴포넌트를 삭제했다가 새로 추가하여
+      // 카운트는 계속 0이 된다.
+     <div>
+      <Counter key={seconds} />
+      {seconds % 2 === 0 && <Counter />} // 초가 짝수 일 때만 렌더링
+     <h1 style={{color: seconds %2 ? 'red' : 'blue'}}>안뇽하세요</h1> 
+     <h2>지금까지 {seconds}초가 지났습니다.</h2>
+    </div>
+  );
+}
+
+export default App;
+```
+
+```jsx
+// 버튼 클릭하면 카운트가 증가하는 컴포넌트
+import { useState } from "react";
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  const onClick = () => {
+    setCount(count + 1);
+  }
+  
+  return (
+    <>
+      <p>{`현재 카운트: ${count}`}</p>
+      <button onClick={onClick}>증가</button>
+    </>
+  )
+}
+
+export default Counter;
+```
 
 
 
