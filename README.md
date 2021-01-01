@@ -1,4 +1,95 @@
-상태 값 변경 함수
+## 커스텀 훅
+
+```jsx
+import useUser from "./useUser";
+
+const Profile = ({ userId }) => {
+  const user = useUser(userId);
+
+  return (<div>
+    {!user && <p>사용자 정보를 가져오는 중...</p>}
+    {user && (
+      <>
+        <p>{`name is ${user.name}`}</p>
+        <p>{`age is ${user.age}`}</p>
+      </>
+    )}
+  </div>)
+};
+
+export default Profile;
+```
+
+```jsx
+import { useEffect, useState } from 'react';
+
+const useUser = (userId) => {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    getUserApi(userId).then(data => setUser(data))
+  }, [userId]);
+
+  return user;
+}
+
+export default useUser;
+
+const USER1 = { name: 'mike', age: 23 };
+const USER2 = { name: 'jane', age: 31 };
+
+const getUserApi = (userId) => {
+  return new Promise(res => {
+    setTimeout(() => {
+      res(userId % 2 ? USER1 : USER2);
+    }, 500);
+  });
+}
+```
+
+- 위의 코드는 userId가 변경될 때마다 훅 내부(useUser)에서 자동으로 api를 호출해 사용자 데이터를 가져옴
+- 훅 내부(useUser) 상태 값(user)가 변경되면 자동으로 Profile 컴포넌트도 같이 새로운 유저와 함께 렌더링 됨.
+
+```jsx
+// 마운트 여부 확인 훅
+import { useEffect, useState } from "react";
+
+export default function useMounted() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  return mounted;
+}
+```
+
+
+
+
+
+---
+
+## 여러 개의 상태 값 useState({ name, age, ... });
+
+```jsx
+const [state, setState] = useState({ name: '', age: 0 });
+
+...
+setState({
+    ...state,
+    name: e.target.value
+});
+```
+
+여러 개의 상태 값을 관리할 때는 useState보다 useReducer 훅이 더 적합.
+
+
+
+---
+
+## 상태 값 변경 함수
 
 ex) setCount(count + 1);
 
