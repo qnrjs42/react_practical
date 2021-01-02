@@ -1,22 +1,26 @@
-import React, { useState } from 'react';
-import useOnMounted from './useOnMounted';
-
+import React, { useEffect, useState } from 'react';
 
 const App = () => {
-  return (
-    <>
-      <Profile />
-    </>
-  )
+  const [flag, setFlag] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => setFlag(prev => !prev), 1000);
+  })
+  if(flag) {
+    return (
+      <>
+        <p key="apple">사과</p>
+        <p key="banana">바나나</p>
+      </>
+    );
+  } else {
+    return (
+      <>
+        <p key="apple">사과</p>
+        <p key="pineapple">파인애플</p>
+        <p key="banana">바나나</p>
+      </>
+    );
+  }
 }
 export default App;
-
-const Profile = ({ userId }) => {
-  const [user, setUser] = useState();
-
-  useOnMounted(() => fetchUser(userId).then((data) => setUser(data)));
-
-  console.log(user);
-}
-
-const fetchUser = () => {};

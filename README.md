@@ -1,3 +1,105 @@
+## 렌더링 속도를 올리기 위한 성능 최적화 방법
+
+```jsx
+const Parent = () => {
+  const [selectedFruit, setSelectedFruit] = useState('apple');
+  const [count, setCount] = useState();
+
+  return (
+    <>
+      <p>{`count: ${count}`}</p>
+      <button onClick={() => setCount(count + 1)}>increase count</button>
+      <SelectFruit
+        selected={selectedFruit}
+        onChange={fruit => setSelectedFruit(fruit)}
+      />
+    </>
+  );
+};
+
+const SelectFruit = React.memo((props) => {
+  return <>SelectFruit</>;
+});
+```
+
+- 위의 방법은 SelectFruit 컴포넌트에 memo() 함수를 썼다고 해서 Parent 컴포넌트가 렌더링 될 때 SelectFruit 컴포넌트가 렌더링 안 되지 않는다.
+- 즉, Parent 컴포넌트가 렌더링 될 때 SelectFruit 컴포넌트도 렌더링이 된다는 뜻이다.
+- `onChange` 부분을 `useCallback` 함수로 사용하면 된다.
+
+
+
+```jsx
+const SelectFruit = () => {
+  const [fruits, setFruits] = useState(["apple", "banana", "orange"]);
+  const [newFruit, setNewFruit] = useState("");
+
+  const addNewFruit = () => {
+    setFruits([...fruits, newFruit]);
+    setNewFruit("");
+  };
+
+  return (
+    <>
+      <Select options={fruits} />
+      <input
+        type="text"
+        value={newFruit}
+        onChange={(e) => setNewFruit(e.target.value)}
+      />
+      <button onClick={addNewFruit}>추가하기</button>
+    </>
+  );
+};
+
+export default SelectFruit;
+
+const Select = React.memo(({ options }) => (
+  <div>
+    {options.map((item, index) => (
+      <p key={index}>{item}</p>
+    ))}
+  </div>
+));
+```
+
+- 상태 값을 불변 객체로 관리하여 처리 `setFruits([...fruits, newFruit]);`
+
+
+
+```jsx
+import React, { useEffect, useState } from 'react';
+
+const App = () => {
+  const [flag, setFlag] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => setFlag(prev => !prev), 1000);
+  })
+  if(flag) {
+    return (
+      <>
+        <p key="apple">사과</p>
+        <p key="banana">바나나</p>
+      </>
+    );
+  } else {
+    return (
+      <>
+        <p key="apple">사과</p>
+        <p key="pineapple">파인애플</p>
+        <p key="banana">바나나</p>
+      </>
+    );
+  }
+}
+export default App;
+```
+
+- key 값이 없을 때는 `flag - false`는 `flag - true`의 바나나 자리에 파인애플로 새로 그리고, 뒤에 바나나를 추가한다.
+- key 값을 추가한 경우 `flag - false`의 파인애플만 추가 됐다가 제거 된다.
+
+
+
 ## useEffect mount가 한 번만 됐을 때 효과적인 로직
 
 ```jsx
