@@ -1,41 +1,40 @@
-import React, { forwardRef, useEffect, useRef } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 
 
 const App = () => {
-  const inputRef = useRef();
+  const profileRef = useRef();
+  const onClick = () => {
+    if(profileRef.current) {
+      console.log('current name length:', profileRef.current.getNameLength());
+      profileRef.current.addAge(5);
+    }
+  }
 
-  useEffect(() => {
-    // current 속성은 실제 돔 요소를 가리킴
-    inputRef.current.focus();
-  }, []);
-
-  return (
-    <div>
-      <input type="text" ref={inputRef} />
-      {/* 
-        일반 컴포넌트에도 ref를 사용할 수 있음
-        Box가 클래스형 컴포넌트라면 해당 컴포넌트의 인스턴스를 가리킴
-      */}
-      {/* <Box ref={inputRef} /> */}
-      <Button ref={inputRef} />
-      <button onClick={() => inputRef.current.focus()}>텍스트로 이동</button>
-    </div>
-  );
-}
-export default App;
-
-const Box = ({ inputRef }) => {
   return (
     <>
-      <input type="text" ref={inputRef} />
-      <button>저장</button>
+      <Profile ref={profileRef} />
+      <button onClick={onClick}>add age 5</button>
     </>
   )
 }
-const Button = React.forwardRef(() => ({ onClick }, ref) => {
+export default App;
+
+const Profile = forwardRef((_, ref) => {
+  const [name, setName] = useState('mike');
+  const [age, setAge] = useState(0);
+
+  // 두 번째 파라미터로 함수를 반환하는데
+  // 반환 값이 부모의 ref 객체가 참조하는 값이 된다.
+  useImperativeHandle(ref, () => ({
+    addAge: (value) => setAge(age + value),
+    getNameLength: () => name.length,
+  }));
+
   return (
     <>
-      <button onClick={onClick} ref={ref}>저장</button>
+      <p>{`name is ${name}`}</p>
+      <p>{`age is ${age}`}</p>
+      {/* ... */}
     </>
   );
 });

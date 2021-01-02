@@ -1,4 +1,149 @@
-## ref
+## 조건부 렌더링
+
+```jsx
+// 방법 1
+return (
+	{isLogin ? (
+     	<p>asda</p>
+     	<p>asda</p>
+	) : null}
+)
+
+// 방법 2 | 삼항 연산자 비해 가독성이 좋다.
+return (
+	{isLogin && (
+     	<p>asda</p>
+     	<p>asda</p>
+	)}
+)
+```
+
+```js
+const v1 = 'ab' && 0 && 2; // 0
+const v2 = "ab" && 2 && 3; // 3
+const v3 = "ab" || 0; // 'ab'
+const v4 = "" || 0 || 3; // 3
+```
+
+```jsx
+<>
+	{cash && <p>{cash}원 보유 중</p>}
+	{!!cash && <p>{cash}원 보유 중</p>}
+	{memo && <p>{200 - memo.length}자 입력 기능</p>}
+</>
+```
+
+- 주의할 점: cash는 Number이기 때문에 0이 들어오면 거짓으로 판단 되어 0으로 렌더링 될 수 있다.
+- 이럴 때는 명확하게 boolean 타입으로 변환해준다.
+- `{!!cash && <p>{cash}원 보유 중</p>}` 
+- memo가 빈 문자열로 들어오면 `{''}` 이렇게 렌더링이 된다.
+
+
+
+---
+
+## useLayoutEffect
+
+- useEffect 훅과 비슷하게 동작하지만, 부수효과 함수를 동기로 호출함.
+- 즉, 렌더링 결과가 돔에 반영된 직후에 바로 호출.
+- 그렇기때문에 연산을 많이하면 브라우저가 먹통이 될 가능성이 높음.
+- 특별한 이유가 없다면 useEffect 사용 권장.
+
+---
+
+## useImperativeHandle
+
+- 클래스형 컴포넌트의 부모 컴포넌트는 ref 객체를 통해 자식 컴포넌트의 메서드를 호출할 수 있다.
+- 함수형 컴포넌트에서도 멤버 변수나 멤버 함수가 있는 것처럼 만들 수 있음.
+
+```jsx
+import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
+
+const App = () => {
+  const profileRef = useRef();
+  const onClick = () => {
+    if(profileRef.current) {
+      console.log('current name length:', profileRef.current.getNameLength());
+      profileRef.current.addAge(5);
+    }
+  }
+
+  return (
+    <>
+      <Profile ref={profileRef} />
+      <button onClick={onClick}>add age 5</button>
+    </>
+  )
+}
+export default App;
+
+const Profile = forwardRef((_, ref) => {
+  const [name, setName] = useState('mike');
+  const [age, setAge] = useState(0);
+
+  // 두 번째 파라미터로 함수를 반환하는데
+  // 반환 값이 부모의 ref 객체가 참조하는 값이 된다.
+  useImperativeHandle(ref, () => ({
+    addAge: (value) => setAge(age + value),
+    getNameLength: () => name.length,
+  }));
+
+  return (
+    <>
+      <p>{`name is ${name}`}</p>
+      <p>{`age is ${age}`}</p>
+      {/* ... */}
+    </>
+  );
+});
+```
+
+
+
+---
+
+## useMoeo
+
+- 계산량이 많은 함수의 반환 값을  재활용하는 용도
+- 
+
+```jsx
+import React, { useMemo, useState } from 'react';
+
+const App = () => {
+  const [v1, setV1] = useState(0);
+  const [v2, setV2] = useState(0);
+  const [v3, setV3] = useState(0);
+  const value = useMemo(() => runExpensiveJob(v1, v2), [v1, v2]);
+
+  return (
+    <>
+      {`value is ${value}`}
+      <button
+        onClick={() => {
+          setV1(Math.random());
+          setV2(Math.random());
+        }}
+      >v1/v2 수정</button><br/><br/>
+
+      {`v3 is ${v3}`}
+      <button onClick={() => setV3(Math.random())}>v3 수정</button>
+    </>
+  )
+}
+export default App;
+
+const runExpensiveJob = (v1, v2) => {
+  console.log('runExpensiveJob is Called');
+  return v1 + v2;
+}
+```
+
+
+
+---
+
+## useRef
 
 - 실제 돔 요소에 접근
 
@@ -25,6 +170,41 @@ export default App;
 ```
 
 
+
+```jsx
+import React, { useEffect, useRef, useState } from "react";
+
+const App = () => {
+  const [age, setAge] = useState(20);
+  const prevAgeRef = useRef(20);
+
+  useEffect(() => {
+    prevAgeRef.current = age;
+  }, [age]);
+
+  const prevAge = prevAgeRef.current;
+  const text = age === prevAge ? "same" : age > prevAge ? "older" : "younger";
+
+  return (
+    <div>
+      {`age: ${age} is ${text} than age ${prevAge}`}
+      <button
+        onClick={() => {
+          const age = Math.floor(Math.random() * 50 + 1);
+          setAge(age);
+        }}
+      >
+        나이 변경
+      </button>
+    </div>
+  );
+};
+export default App;
+```
+
+- useRef로 이전 값 기억하기
+
+  
 
 ---
 
