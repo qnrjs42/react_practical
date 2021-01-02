@@ -1,3 +1,46 @@
+## useEffect mount가 한 번만 됐을 때 효과적인 로직
+
+```jsx
+// App.js
+import React, { useState } from 'react';
+import useOnMounted from './useOnMounted';
+
+
+const App = () => {
+  return (
+    <>
+      <Profile />
+    </>
+  )
+}
+export default App;
+
+const Profile = ({ userId }) => {
+  const [user, setUser] = useState();
+
+  useOnMounted(() => fetchUser(userId).then((data) => setUser(data)));
+
+  console.log(user);
+}
+
+const fetchUser = () => {};
+```
+
+```jsx
+// useOnMounted.js
+import { useEffect } from 'react';
+const useOnMounted = (effect) => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(effect, []);
+}
+
+export default useOnMounted;
+```
+
+
+
+---
+
 ## 조건부 렌더링
 
 ```jsx
