@@ -1,8 +1,126 @@
+## context API
+
+- 상위 컴포넌트에서 하위 컴포넌트로 데이터 전달할 떄 속성 값을 사용 함.
+- 많은 수의 하위 컴포넌트로 전달할 때 속성 값을 전달하는 코드를 반복적으로 작성해야 함.
+- 상위 컴포넌트 - 하위 컴포넌트와 멀리 떨어진 경우 중간에 있는 컴포넌트가 기계적으로 속성 값을 전달하는 코드를 작성해야 함.
+
+```jsx
+import React, { createContext, useState } from 'react';
+
+// 1. 초기 값을 넣어서 호출하면 객체가 반환
+// 그 객체 안에 Provider, Consumer 컴포넌트가 들어있음
+const UserContext = createContext('unknown');
+
+const App = () => {
+  const [name, setName] = useState('mike');
+
+  return (
+    <div>
+      {/* 
+        2. Provider에서 value에 값을 넣어주면 Consumer에서 그 값을 받아서 처리
+      */}
+      <UserContext.Provider value={name}>
+        <div>
+          상단 메뉴
+        </div>
+        <Profile />
+        <div>하단 메뉴</div>
+        <input type="text" value={name} onChange={e => setName(e.target.value)} />
+      </UserContext.Provider>
+    </div>
+  );
+}
+export default App;
+
+const Profile = React.memo(() => {
+  console.log('Profile');
+  return (
+    <>
+      <Greeting />
+    </>
+  );
+});
+
+const Greeting = () => {
+  return (
+    // 3. Consumer는 가장 가까운 Provider를 찾아서 value를 사용
+    // 4. root까지 가도 Provider를 찾지 못하면 초기 값을 사용
+    <UserContext.Consumer>
+      {username => <p>{`${username}님 안녕하세요.`}</p>}
+    </UserContext.Consumer>
+  )
+}
+```
+
+```jsx
+const Greeting = () => {
+  const username = useContext(UserContext);
+  return (
+    <>
+      {<p>{`${username}님 안녕하세요.`}</p>}
+    </>
+  );
+}
+```
+
+- UserContext.Consumer 대신에 useContext 훅으로 사용하면 가독성이 좋아진다.
+
+
+
+### context 단점
+
+```jsx
+const UserContext = createContext({ username: "unknown", age: 0 });
+
+const App = () => {
+  const [username, setUsername] = useState('');
+  const [age, setAge] = useState(0);
+
+  return (
+    <div>
+      <UserContext.Provider value={{ username, age }}>
+        <Profile />
+      </UserContext.Provider>
+    </div>
+  );
+}
+export default App;
+```
+
+- `value={{ username, age }}` 이런식으로 입력하게 되면 App 컴포넌트가 렌더링 될 때마다 새로운 객체가 만들어짐. `value={{ username, age }}` 값이 변경 되지 않아도 불필요한 렌더링이 될 수 있음.
+
+
+
+---
+
+## jsonconfig.json
+
+```json
+// jsonconfig.json
+// 타입체크, auto import
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "module": "commonjs",
+    "target": "es6",
+    "checkJs": true
+  },
+  "exclude": ["node_modules"]
+}
+```
+
+
+
+---
+
 ## 훅 사용 시 지켜야 할 규칙
 
 - 하나의 컴포넌트에서 훅을 호출하는 순서는 항상 같아야 한다.
 - 훅은 함수형 컴포넌트 또는 커스텀 훅 안에서만 호출되어야 한다.
 - 클래스형 컴포넌트 메서드 뿐만 아니라 일반 함수에서도  사용할 수 없다.
+- if문 안에서 훅 사용할 수 없다.
+- for문 안에서 훅 사용할 수 없다.
+- 일반 함수 안에서 훅 사용할 수 없다.
 
 ---
 
