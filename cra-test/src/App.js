@@ -1,45 +1,41 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { forwardRef, useEffect, useRef } from 'react';
 
-// const UserContext = createContext({ username: 'unknown', helloCount: 0 });
-const SetUserContext = createContext(() => {});
-
-const UserContext = createContext({ username: "unknown", age: 0 });
 
 const App = () => {
-  const [username, setUsername] = useState('');
-  const [age, setAge] = useState(0);
+  const inputRef = useRef();
+
+  useEffect(() => {
+    // current 속성은 실제 돔 요소를 가리킴
+    inputRef.current.focus();
+  }, []);
 
   return (
     <div>
-      <UserContext.Provider value={{ username, age }}>
-        <Profile />
-      </UserContext.Provider>
+      <input type="text" ref={inputRef} />
+      {/* 
+        일반 컴포넌트에도 ref를 사용할 수 있음
+        Box가 클래스형 컴포넌트라면 해당 컴포넌트의 인스턴스를 가리킴
+      */}
+      {/* <Box ref={inputRef} /> */}
+      <Button ref={inputRef} />
+      <button onClick={() => inputRef.current.focus()}>텍스트로 이동</button>
     </div>
   );
 }
 export default App;
 
-
-const Profile = React.memo(() => {
-  console.log("Profile");
+const Box = ({ inputRef }) => {
   return (
     <>
-      <Greeting />
+      <input type="text" ref={inputRef} />
+      <button>저장</button>
+    </>
+  )
+}
+const Button = React.forwardRef(() => ({ onClick }, ref) => {
+  return (
+    <>
+      <button onClick={onClick} ref={ref}>저장</button>
     </>
   );
 });
-
-const Greeting = () => {
- const setUser = useContext(SetUserContext);
- const { username, helloCount } = useContext(UserContext);
-
- return (
-   <>
-    <p>{`${username}님 하이요`}</p>
-    <p>{`인사 횟수: ${helloCount}`}</p>
-    <button onClick={() => setUser({ username, helloCount: helloCount + 1})}>
-      인사하기
-    </button>
-   </>
- )
-};

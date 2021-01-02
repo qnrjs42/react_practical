@@ -1,3 +1,33 @@
+## ref
+
+- 실제 돔 요소에 접근
+
+```jsx
+import React, { useEffect, useRef } from 'react';
+
+
+const App = () => {
+  const inputRef = useRef();
+
+  useEffect(() => {
+    // current 속성은 실제 돔 요소를 가리킴
+    inputRef.current.focus();
+  }, []);
+
+  return (
+    <div>
+      <input type="text" ref={inputRef} />
+      <button>텍스트로 이동</button>
+    </div>
+  );
+}
+export default App;
+```
+
+
+
+---
+
 ## context API
 
 - 상위 컴포넌트에서 하위 컴포넌트로 데이터 전달할 떄 속성 값을 사용 함.
