@@ -1,3 +1,40 @@
+## react-redux (useSelector, shallowEqual)
+
+```jsx
+import { useSelector, shallowEqual } from 'react-redux';
+
+const FriendMain = () => {
+    const [friends, friends2] = useSelector(state = > [state.friend.friends, state.friend.friends2], shallowEqual);
+    
+    ...
+}
+export default FriendMain;
+```
+
+- 여기서 `[state.friend.friends, state.friend.friends2]`배열이 매번 새로 생성 되기 때문에 배열 안에 있는 값이 변경 되지 않아도 리덕스에서 액션이 처리될 때마다 불필요하게 `FriendMain`컴포넌트가 렌더링 될 수 있다는 단점이 있음.
+- 이때 사용하는게 `shallowEqual`함수를 입력하여 렌더링 여부를 결정.
+- `friends`와 `friends2`를 각각 비교하기 때문에 이 두 값이 변경 되었을 때만 `FriendMain`컴포넌트가 렌더링이 된다.
+- 매번 `shallowEqual`함수를 입력하기 번거롭기 때문에 커스텀 훅을 만들어서 사용을 권장.
+
+```jsx
+import { useSelector, shallowEqual } from 'react-redux';
+
+const useMySelector = (selector) => {
+    return useSelector(selector, shallowEqual);
+}
+
+const MyComponent = () => {
+    const [value1, value2] = useMySelector(state => [state.value, state.value2]);
+    const value3 = useMySelector(state => state.value3); // 값이 하나일 때 비효율적
+    const [value4] = useMySelector(state => [state.value4]); // 값이 하나일 때 효율적
+}
+```
+
+- 주의할 점: `shallowEqual`은 `value3`이 갖고 있는 모든 속성 값을 비교하기 때문에 비효율적.
+- 그래서 값을 하나만 반환하더라도 배열로 감싸는게 효율적.
+
+
+
 ## 렌더링 속도를 올리기 위한 성능 최적화 방법
 
 ```jsx
