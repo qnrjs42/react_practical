@@ -2,8 +2,14 @@ import React, { useEffect } from "react";
 import { Col, Descriptions, PageHeader, Row, Space, Spin, Typography } from "antd";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+
 import { actions, Types } from "../state";
 import useFetchInfo from "../../common/hook/useFetchInfo";
+
+import History from '../../common/component/History';
+import TagList from './TagList';
+import Department from './Department';
+
 
 /**
  * 
@@ -38,14 +44,14 @@ const User = ({ match }) => {
               <Descriptions.Item label="이름">
                 <Typography.Text>{user.name}</Typography.Text>
               </Descriptions.Item>
-              <Descriptions.Item label="ththr">
-                {user.department}
+              <Descriptions.Item label="소속">
+                <Department />
               </Descriptions.Item>
               <Descriptions.Item label="태그">
-                {user.tag}
+                <TagList />
               </Descriptions.Item>
               <Descriptions.Item label="수정 내역">
-                수정 내역
+                <History />
               </Descriptions.Item>
             </Descriptions>
           )}
