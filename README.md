@@ -1,3 +1,96 @@
+## SPA 흰 화면에 로딩창 띄우기
+
+```html
+<!-- /public/index.html -->
+
+<head>
+    <style>
+        /* 초기에 display: none */
+      #init-loading {
+        margin-top: 100px;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+      }
+      .lds-facebook {
+        display: inline-block;
+        position: relative;
+        width: 80px;
+        height: 80px;
+      }
+      .lds-facebook div {
+        display: inline-block;
+        position: absolute;
+        left: 8px;
+        width: 16px;
+        background: black;
+        animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+      }
+      .lds-facebook div:nth-child(1) {
+        left: 8px;
+        animation-delay: -0.24s;
+      }
+      .lds-facebook div:nth-child(2) {
+        left: 32px;
+        animation-delay: -0.12s;
+      }
+      .lds-facebook div:nth-child(3) {
+        left: 56px;
+        animation-delay: 0;
+      }
+      @keyframes lds-facebook {
+        0% {
+          top: 8px;
+          height: 64px;
+        }
+        50%, 100% {
+          top: 24px;
+          height: 32px;
+        }
+      }
+    </style>
+    <script>
+        // 인터넷이 빠른 경우 깜박 거리는게 거슬리기 때문에 0.5초 이상 걸리면 표시한다.
+      setTimeout(() => {
+        let loadingEl = document.getElementById('init-loading');
+        if(loadingEl) loadingEl.style.display = 'flex';
+      }, 500);
+    </script>
+</head>
+
+<body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <div id="init-loading">
+      <div class="lds-facebook">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+      <h1>Downloading...</h1>
+    </div>
+</body>
+```
+
+```jsx
+// App.js
+
+export default function App() {
+    // 로딩이 끝나면 없애주기
+    useEffect(() => {
+        const bodyEl = document.getElementsByTagName('body')[0];
+        const loadingEl = document.getElementById('init-loading');
+        bodyEl.removeChild(loadingEl);
+    }, []);
+    
+    ...
+}
+```
+
+
+
+---
+
 ## redux-saga (makefetchSaga)
 
 ```jsx
