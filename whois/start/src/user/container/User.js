@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Col, Descriptions, PageHeader, Row, Space, Spin, Typography } from "antd";
+import { Col, Descriptions, PageHeader, Row, Typography } from "antd";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -9,6 +9,7 @@ import useFetchInfo from "../../common/hook/useFetchInfo";
 import History from '../../common/component/History';
 import TagList from './TagList';
 import Department from './Department';
+import FetchLabel from "../component/FetchLabel";
 
 
 /**
@@ -31,26 +32,37 @@ const User = ({ match }) => {
     <Row justify="center">
       <Col xs={24} md={20} lg={14}>
         <PageHeader
-        onBack={history.goBack}
-        title={
-          <Space>
-            사용자 정보
-            {isSlow && <Spin size="small" />}
-          </Space>
-        }
+          onBack={history.goBack}
+          title={
+            <FetchLabel label="사용자 정보" actionType={Types.FetchUser} />
+          }
         >
           {user && (
             <Descriptions layout="vertical" bordered column={1}>
               <Descriptions.Item label="이름">
                 <Typography.Text>{user.name}</Typography.Text>
               </Descriptions.Item>
-              <Descriptions.Item label="소속">
+              <Descriptions.Item
+                label={
+                  <FetchLabel
+                    label="소속"
+                    actionType={Types.FetchUpdateUser}
+                    fetchKey="department"
+                  />
+                }
+              >
                 <Department />
               </Descriptions.Item>
-              <Descriptions.Item label="태그">
+              <Descriptions.Item
+                label={
+                  <FetchLabel label="태그" actionType={Types.FetchUpdateUser} fetchKey="tag" />
+                }
+              >
                 <TagList />
               </Descriptions.Item>
-              <Descriptions.Item label="수정 내역">
+              <Descriptions.Item
+                label="수정 내역"
+              >
                 <History />
               </Descriptions.Item>
             </Descriptions>
@@ -62,7 +74,7 @@ const User = ({ match }) => {
         </PageHeader>
       </Col>
     </Row>
-  )
+  );
 }
 
 export default User;

@@ -11,7 +11,7 @@ const Department = () => {
 
   const onSaveDepartment = () => {
     if(tempDepartment) {
-      dispatch(actions.fetchUpdateUser({ user, key: 'department', value: tempDepartment, fetchKey: 'depoartment' }));
+      dispatch(actions.fetchUpdateUser({ user, key: 'department', value: tempDepartment, fetchKey: 'department' }));
       setIsEditDepartment(false);
     } else {
       message.error('소속은 필수 입니다.');
