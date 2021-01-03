@@ -1,3 +1,27 @@
+## redux-saga (makefetchSaga)
+
+```jsx
+export default function* () {
+  yield all([takeEvery(
+    Types.FetchUser,
+    makeFetchSaga({ fetchSaga: fetchUser, canCache: true }),
+  )]);
+}
+```
+
+- `canCache` true인 경우 정해진 시간동안 해당 API가 응답하는 값을 캐싱. 캐싱된 데이터가 있을 경우 액션이 발생 했을 때 API를 호출하지 않고 캐싱된 데이터를 이용.
+
+```
+사가 미들웨어 - makeFetchSaga - 사가 함수
+
+- 사가 함수에서 API 요청하고, makeFetchSaga가 그걸 받아서 필요한 처리한 뒤, 그대로 미들웨어에게 전달
+- API 데이터 캐싱하는 경우는 사가 함수가 API 요청을 할 때 makeFetchSaga가 미들웨어에게 전달하지 않고 캐싱된 데이터를 그대로 사가 함수에게 전달
+```
+
+
+
+---
+
 ## react-redux (useSelector, shallowEqual)
 
 ```jsx
