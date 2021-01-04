@@ -26,18 +26,22 @@ const User = ({ match }) => {
   const user = useSelector(state => state.user.user);
   const userHistory = useSelector(state => state.user.userHistory);
   const name = match.params.name;
-  const { isFetched, isSlow } = useFetchInfo(Types.FetchUser);
+  const { isFetched } = useFetchInfo(Types.FetchUser);
 
   useEffect(() => {
     dispatch(actions.fetchUser(name));
     dispatch(actions.fetchUserHistory(name));
   }, [dispatch, name]);
 
+  useEffect(() => {
+    return () => dispatch(actions.initialize());
+  }, [dispatch]);
+
   return (
     <Row justify="center">
       <Col xs={24} md={20} lg={14}>
         <PageHeader
-          onBack={history.goBack}
+          onBack={() => history.push('/')}
           title={
             <FetchLabel label="사용자 정보" actionType={Types.FetchUser} />
           }
