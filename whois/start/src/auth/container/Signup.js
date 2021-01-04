@@ -2,28 +2,35 @@ import React from "react";
 import { Button, Form, Input } from 'antd';
 import AuthLayout from "../component/AuthLayout";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { actions } from "../state";
+import useBlockLoginUser from "../hook/useBlockLoginUser";
 
 const Signup = () => {
+  useBlockLoginUser();
+  
+  const dispatch = useDispatch();
+  const onFinish = ({name}) => {
+    const email = `${name}${EMAIL_SUFFIX}`;
+    dispatch(actions.fetchSignup(email));
+  }
+  
   return (
     <>
-      <AuthLayout onFinish={() => {}}>
+      <AuthLayout onFinish={onFinish}>
         <Form.Item
           name="name"
           rules={[
             {
               required: true,
-              message: 'Plesae input your email',
+              message: "Plesae input your email",
             },
           ]}
         >
-          <Input 
-            autoFocus
-            addonAfter={EMAIL_SUFFIX}
-            placeholder=""
-          />
+          <Input autoFocus addonAfter={EMAIL_SUFFIX} placeholder="" />
         </Form.Item>
         <Form.Item>
-          <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
+          <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
             인증 메일 받기
           </Button>
           Or <Link to="login">login</Link>

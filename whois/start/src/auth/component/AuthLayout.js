@@ -1,6 +1,5 @@
 import React from "react";
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Col, Row, Typography, Form, Input, Button, Checkbox } from "antd";
+import { Col, Row, Typography, Form } from "antd";
 
 /**
  * 

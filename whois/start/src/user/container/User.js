@@ -10,6 +10,7 @@ import History from '../../common/component/History';
 import TagList from './TagList';
 import Department from './Department';
 import FetchLabel from "../component/FetchLabel";
+import useNeedLogin from "../../common/hook/useNeedLogin";
 
 
 /**
@@ -18,6 +19,8 @@ import FetchLabel from "../component/FetchLabel";
  * @param {import('react-router').match} param.match
  */
 const User = ({ match }) => {
+  useNeedLogin();
+  
   const history = useHistory();
   const dispatch = useDispatch();
   const user = useSelector(state => state.user.user);
