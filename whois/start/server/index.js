@@ -90,7 +90,7 @@ app.post('/user/update', (req, res) => {
         },
       );
     });
-  }, 3000);
+  }, 1);
 });
 
 app.get('/auth/user', (req, res) => {
